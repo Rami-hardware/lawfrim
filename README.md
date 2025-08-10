@@ -111,9 +111,8 @@ ansible-playbook -i inventory/hosts site.yml
 ```
 
 ## 🔁 CI/CD (via GitHub Actions)
-``` bash
 •	Push to main → Triggers Docker service update on the remote VM
-```
+
 
 ## 📈 Dashboards
 
@@ -128,7 +127,9 @@ Example panels:
 ## 🤝 Author
 
 Rami Dannah
-DevOps Engineer | Self-hosting Enthusiast | Infrastructure-as-Code Advocate
+DevOps Engineer 
+Self-hosting Enthusiast 
+Infrastructure-as-Code Advocate
 📍 Currently based in Saudi Arabia
 🌐 LinkedIn | GitHub
 
