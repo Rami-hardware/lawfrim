@@ -1,0 +1,32 @@
+# -- DNS systemd-resolved config (unchanged) --
+- name: Ensure DNS is set via systemd-resolved
+  block:
+  - name: Configure systemd-resolved DNS
+    lineinfile:
+      path: /etc/systemd/resolved.conf
+      regexp: '^#?DNS='
+      line: 'DNS=1.1.1.1 8.8.8.8'
+      backup: yes
+
+  - name: Ensure DNSStubListener is enabled
+    lineinfile:
+      path: /etc/systemd/resolved.conf
+      regexp: '^#?DNSStubListener='
+      line: 'DNSStubListener=yes'
+      backup: yes
+
+  - name: Restart systemd-resolved
+    systemd:
+      name: systemd-resolved
+      state: restarted
+      enabled: true
+    failed_when: false
+
+  - name: Recreate /etc/resolv.conf symlink
+    file:
+      src: /run/systemd/resolve/stub-resolv.conf
+      dest: /etc/resolv.conf
+      state: link
+      force: yes
+    ignore_errors: true
+    failed_when: false

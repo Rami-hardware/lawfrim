@@ -1,0 +1,29 @@
+- name: Ensure user shared directory exists
+  file:
+    path: "/mnt/pve/shared"
+    state: directory
+    owner: 1000
+    group: 1000
+    mode: '0777'
+
+- name: Enable UFW
+  community.general.ufw:
+    state: enabled
+
+- name: Allow SMB port 139
+  community.general.ufw:
+    rule: allow
+    port: 139
+    proto: tcp
+
+- name: Allow SMB port 445
+  community.general.ufw:
+    rule: allow
+    port: 445
+    proto: tcp
+
+- name: Allow SSH port 22
+  community.general.ufw:
+    rule: allow
+    port: 22
+    proto: tcp

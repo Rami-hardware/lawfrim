@@ -1,0 +1,19 @@
+- name: Ensure rsync is installed
+  package:
+    name: rsync
+    state: present
+
+- name: Ensure ssh client is installed
+  package:
+    name: openssh-client
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Create daily rsync backup cron job
+  ansible.builtin.cron:
+    name: "Daily rsync backup"
+    minute: "0"
+    hour: "20"
+    job: >
+      /usr/bin/rsync -az -e "/usr/bin/ssh -i {{ ssh_key_path }} -o StrictHostKeyChecking=no" --delete {{ source_dir }} {{ dest_user }}@{{ dest_host }}:{{ dest_dir }} >> {{ log_file }} 2>&1
+    user: root

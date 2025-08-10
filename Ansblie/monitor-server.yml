@@ -1,0 +1,15 @@
+---
+- name: Deploy Monitor Server Configuration
+  hosts: monitor-server
+  become: true
+
+  vars:
+    app_dir: /opt/alert-forwarder
+
+  roles:
+  - dns_config
+  - docker_setup
+  - promtail
+  - config
+  - middleware
+  - docker_apps

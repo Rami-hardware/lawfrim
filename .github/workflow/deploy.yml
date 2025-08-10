@@ -1,0 +1,26 @@
+name: Terraform CI for Home Server
+
+on:
+  push:
+    branches:
+    - media-rollback-final
+
+jobs:
+  terraform:
+    name: Terraform Plan and Lint
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.8.5 # Use your required version
+
+    - name: Initialize Terraform
+      run: terraform init
+
+    - name: Plan
+      run: terraform plan -out=tfplan

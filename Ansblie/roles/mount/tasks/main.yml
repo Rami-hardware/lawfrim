@@ -1,0 +1,23 @@
+- name: Unmount '/mnt/pve/{{ var }}' if mounted
+  mount:
+    path: '/mnt/pve/{{ var }}'
+    state: unmounted
+  ignore_errors: true
+
+- name: Format /dev/sdb as ext4
+  filesystem:
+    fstype: ext4
+    dev: /dev/sdb
+
+- name: Ensure mount point directory exists
+  file:
+    path: '/mnt/pve/{{ var }}'
+    state: directory
+
+- name: Mount /dev/sdb to /mnt/pve/{{ var }}
+  mount:
+    path: '/mnt/pve/{{ var }}'
+    src: /dev/sdb
+    fstype: ext4
+    state: mounted
+    opts: defaults

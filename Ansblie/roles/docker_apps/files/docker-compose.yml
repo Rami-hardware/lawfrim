@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  rustdesk-hbbs:
+    image: rustdesk/rustdesk-server:latest
+    container_name: rustdesk-hbbs
+    command: hbbs -k _  # use "_" if you don’t have TLS certs
+    ports:
+      - "21115:21115"
+      - "21116:21116"
+      - "21117:21117"
+      - "21118:21118"
+    volumes:
+      - /opt/rustdesk:/root
+    restart: unless-stopped
+
+  rustdesk-hbbr:
+    image: rustdesk/rustdesk-server:latest
+    container_name: rustdesk-hbbr
+    command: hbbr -k _
+    ports:
+      - "21119:21119"
+    volumes:
+      - /opt/rustdesk:/root
+    restart: unless-stopped
+
+  adguardhome:
+    image: adguard/adguardhome:latest
+    container_name: adguardhome
+    ports:
+      - "5353:53/tcp"
+      - "5353:53/udp"
+      - "67:67/udp"
+      - "68:68/tcp"
+      - "68:68/udp"
+      - "80:80"
+      - "443:443"
+      - "3000:3000"
+    volumes:
+      - /opt/adguardhome/work:/opt/adguardhome/work
+      - /opt/adguardhome/conf:/opt/adguardhome/conf
+    restart: unless-stopped
+
+  smb:
+    image: dperson/samba
+    container_name: smb
+    ports:
+      - "139:139"
+      - "445:445"
+    volumes:
+      - "/mnt/pve/SMB-storage:/mount"
+    environment:
+      - USERID=1000
+      - GROUPID=1000
+      - SAMBA_USER=youruser
+      - SAMBA_PASS=yourpassword
+      - SAMBA_WORKGROUP=WORKGROUP
+      - SAMBA_SHARE_NAME=SMBStorage
+      - SAMBA_SHARE_PATH=/mount
+      - SAMBA_SHARE_READ_ONLY=no
+      - SAMBA_SHARE_GUEST_OK=yes
+    restart: unless-stopped

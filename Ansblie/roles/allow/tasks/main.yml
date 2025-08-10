@@ -1,0 +1,66 @@
+- name: Enable UFW
+  community.general.ufw:
+    state: enabled
+
+- name: Allow SMB port 139
+  community.general.ufw:
+    rule: allow
+    port: 139
+    proto: tcp
+
+- name: Allow SMB port 445
+  community.general.ufw:
+    rule: allow
+    port: 445
+    proto: tcp
+
+- name: Allow SSH port 22
+  community.general.ufw:
+    rule: allow
+    port: 22
+    proto: tcp
+
+- name: Allow mDNS TCP
+  community.general.ufw:
+    rule: allow
+    port: 5353
+    proto: tcp
+
+- name: Allow mDNS UDP
+  community.general.ufw:
+    rule: allow
+    port: 5353
+    proto: udp
+
+- name: Allow DHCP server
+  community.general.ufw:
+    rule: allow
+    port: 67
+    proto: udp
+
+- name: Allow DHCP client TCP
+  community.general.ufw:
+    rule: allow
+    port: 68
+    proto: tcp
+
+- name: Allow DHCP client UDP
+  community.general.ufw:
+    rule: allow
+    port: 68
+    proto: udp
+
+- name: Allow HTTP
+  community.general.ufw:
+    rule: allow
+    port: 80
+
+- name: Allow HTTPS
+  community.general.ufw:
+    rule: allow
+    port: 443
+
+- name: Allow custom app on port 3000
+  community.general.ufw:
+    rule: allow
+    port: 3000

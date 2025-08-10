@@ -1,0 +1,57 @@
+- name: Ensure Promtail config directory exists
+  file:
+    path: /opt/docker/promtail
+    state: directory
+    mode: '0755'
+
+- name: Check if promtail config.yml is a directory
+  stat:
+    path: /opt/docker/promtail/config.yml
+  register: promtail_config_stat
+
+- name: Remove directory if exists at config.yml path
+  file:
+    path: /opt/docker/promtail/config.yml
+    state: absent
+  when: promtail_config_stat.stat.isdir is defined and promtail_config_stat.stat.isdir
+
+- name: Create Promtail config file
+  copy:
+    dest: /opt/docker/promtail/config.yml
+    content: |
+      server:
+        http_listen_port: 9080
+        grpc_listen_port: 0
+
+      positions:
+        filename: /tmp/positions.yaml
+
+      clients:
+        - url: http://192.168.8.215:3100/loki/api/v1/push
+
+      scrape_configs:
+        - job_name: samba-logs
+          static_configs:
+            - targets:
+                - localhost
+              labels:
+                job: samba
+                __path__: /var/log/samba/*
+
+        - job_name: docker-logs
+          static_configs:
+            - targets:
+                - localhost
+              labels:
+                job: docker
+                __path__: /var/log/containers/*.log
+
+        - job_name: system
+          static_configs:
+            - targets:
+                - localhost
+              labels:
+                job: varlogs
+                __path__: /var/log/{syslog,*.log}
+
+    mode: '0644'

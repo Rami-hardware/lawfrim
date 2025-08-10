@@ -1,0 +1,6 @@
+promtail_config_path: /opt/docker/promtail/config.yml
+
+docker_apps_enabled:
+- samba
+- promtail
+- node-exporter

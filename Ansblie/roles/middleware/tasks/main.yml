@@ -1,0 +1,111 @@
+- name: Ensure application directory exists
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Copy Node.js alert forwarder code
+  copy:
+    dest: "{{ app_dir }}/server.js"
+    content: |
+      const express = require('express');
+      const axios = require('axios');
+
+      const app = express();
+      app.use(express.json());
+
+      const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1396875497027408004/J4hG0rf9c5mwgxtMqQULApokaKOlkzsAlRaq69Ckx-Kh-pPRfDDyB_IQmPK3wHiX8-l_';
+
+      app.post('/alertmanager', async (req, res) => {
+        const alerts = req.body.alerts || [];
+
+        if (!alerts.length) {
+          console.warn('Received alert with empty alerts array');
+          return res.status(400).send('No alerts to process');
+        }
+
+        const messages = alerts.map(alert => {
+          const summary = alert.annotations?.summary || alert.labels?.alertname || 'No summary';
+          const status = alert.status || 'unknown';
+          const description = alert.annotations?.description || '';
+          return `**Alert:** ${summary}\nStatus: ${status}\n${description}`;
+        });
+
+        const payload = {
+          content: messages.join('\n\n')
+        };
+
+        try {
+          console.log('Sending payload to Discord:', payload.content);
+          await axios.post(DISCORD_WEBHOOK_URL, payload, {
+            headers: { 'Content-Type': 'application/json' }
+          });
+          res.status(200).send('Alert forwarded to Discord');
+        } catch (error) {
+          console.error('Error sending alert to Discord:', error.response?.data || error.message);
+          res.status(500).send('Failed to send alert to Discord');
+        }
+      });
+
+      app.get('/alertmanager', (req, res) => {
+        console.log('GET /alertmanager called');
+        res.send('Alertmanager webhook server is running');
+      });
+
+      const PORT = process.env.PORT || 3002;
+      app.listen(PORT, () => {
+        console.log(`Alertmanager webhook server listening on port ${PORT}`);
+      });
+
+- name: Check if Node.js 20 is installed
+  shell: node -v
+  register: node_version_check
+  ignore_errors: true
+
+- name: Download and run NodeSource Node.js 20 setup script if not installed or wrong version
+  ansible.builtin.shell: curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+  args:
+    executable: /bin/bash
+  become: true
+  when: node_version_check.stdout is not search("^v20\.")
+
+- name: Install Node.js 20
+  apt:
+    name: nodejs
+    state: present
+    update_cache: yes
+  become: true
+
+- name: Initialize npm project
+  command: npm init -y
+  args:
+    chdir: "{{ app_dir }}"
+  environment:
+    HOME: "/root"
+
+- name: Install required npm packages
+  command: npm install express axios
+  args:
+    chdir: "{{ app_dir }}"
+  environment:
+    HOME: "/root"
+
+- name: Start Node.js app using pm2
+  npm:
+    name: pm2
+    global: yes
+
+- name: Start the app with pm2
+  command: pm2 start server.js --name alert-forwarder -f
+  args:
+    chdir: "{{ app_dir }}"
+
+- name: Save pm2 process list
+  command: pm2 save
+
+- name: Enable pm2 to start on boot
+  command: pm2 startup systemd -u root --hp /root
+  args:
+    creates: /etc/systemd/system/pm2-root.service

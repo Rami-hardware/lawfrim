@@ -1,0 +1,150 @@
+- name: Ensure Prometheus config directory exists
+  ansible.builtin.file:
+    path: /opt/docker/prometheus
+    state: directory
+    mode: '0755'
+
+- name: Create Prometheus config file with minimal valid config
+  ansible.builtin.copy:
+    dest: /opt/docker/prometheus/prometheus.yml
+    content: |
+      global:
+        scrape_interval: 15s
+
+      scrape_configs:
+        - job_name: 'prometheus'
+          static_configs:
+            - targets: ['localhost:9090']
+
+        - job_name: 'remote_node'
+          static_configs:
+            - targets: ['192.168.8.222:9100']
+        - job_name: 'smb_node'
+          static_configs:
+            - targets: ['192.168.8.225:9100']
+        - job_name: 'backup_node'
+          static_configs:
+            - targets: ['192.168.8.210:9100']
+    mode: '0644'
+    force: yes
+
+- name: Check if Alertmanager config.yml exists
+  stat:
+    path: /opt/docker/alertmanager/config.yml
+  register: alertmanager_config_stat
+
+- name: Remove alertmanager config.yml if it is a directory
+  file:
+    path: /opt/docker/alertmanager/config.yml
+    state: absent
+  when: alertmanager_config_stat.stat.isdir
+
+- name: Ensure Alertmanager config directory exists
+  file:
+    path: /opt/docker/alertmanager
+    state: directory
+    mode: '0755'
+
+- name: Create Alertmanager config file with correct webhook config
+  copy:
+    dest: /opt/docker/alertmanager/config.yml
+    content: |
+      global:
+        resolve_timeout: 5m
+
+      route:
+        receiver: 'nodejs-webhook'
+
+      receivers:
+        - name: 'nodejs-webhook'
+          webhook_configs:
+            - url: 'http://192.168.8.215:3002/alertmanager'
+
+    mode: '0644'
+
+- name: Ensure Grafana data directory exists
+  ansible.builtin.file:
+    path: /opt/docker/grafana
+    state: directory
+    mode: '0755'
+
+- name: Set ownership of Grafana data directory to UID 472 (grafana user)
+  ansible.builtin.file:
+    path: /opt/docker/grafana
+    owner: 472
+    group: 472
+    recurse: yes
+
+- name: Set permissions for Grafana data directory
+  ansible.builtin.file:
+    path: /opt/docker/grafana
+    mode: '0755'
+    recurse: yes
+
+- name: Check if Loki config.yml exists and is a directory
+  ansible.builtin.stat:
+    path: /opt/docker/loki/config.yml
+  register: loki_config_stat
+
+- name: Remove Loki config.yml if it is a directory
+  ansible.builtin.file:
+    path: /opt/docker/loki/config.yml
+    state: absent
+  when: loki_config_stat.stat.exists and loki_config_stat.stat.isdir
+
+- name: Ensure Loki config directory exists
+  ansible.builtin.file:
+    path: /opt/docker/loki
+    state: directory
+    mode: '0755'
+
+- name: Ensure Loki data directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+  - /loki/index
+  - /loki/boltdb-cache
+  - /loki/chunks
+  - /loki/compactor
+  - /loki/wal
+
+- name: Create Loki config.yml with valid configuration
+  ansible.builtin.copy:
+    dest: /opt/docker/loki/config.yml
+    mode: '0644'
+    force: yes
+    content: |
+      auth_enabled: false
+
+      server:
+        http_listen_port: 3100
+
+      common:
+        path_prefix: /loki
+        replication_factor: 1
+        ring:
+          instance_addr: 127.0.0.1
+          kvstore:
+            store: inmemory
+
+      storage_config:
+        boltdb_shipper:
+          active_index_directory: /loki/index
+          cache_location: /loki/boltdb-cache
+        filesystem:
+          directory: /loki/chunks
+
+      schema_config:
+        configs:
+          - from: 2020-10-24
+            store: boltdb-shipper
+            object_store: filesystem
+            schema: v11
+            index:
+              prefix: index_
+              period: 24h
+
+      limits_config:
+        allow_structured_metadata: false

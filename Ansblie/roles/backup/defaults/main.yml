@@ -1,0 +1,8 @@
+---
+ssh_key_path: "/home/smb/.ssh/id_rsa"
+source_dir: "/mnt/pve/shared/"
+dest_user: "test"
+dest_host: "192.168.8.210"
+dest_dir: "/mnt/pve/backup"
+cron_user: "root"
+log_file: /var/log/rsync-cron.log

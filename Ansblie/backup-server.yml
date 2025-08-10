@@ -1,0 +1,14 @@
+---
+- name: Deploy Backup Server Configuration
+  hosts: backup-server
+  become: true
+
+  vars:
+    var: backup
+
+  roles:
+  - dns_config
+  - mount
+  - docker_setup
+  - promtail
+  - docker_apps

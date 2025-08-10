@@ -1,0 +1,4 @@
+sudo pm2 stop alert-forwarder
+sudo pm2 delete alert-forwarder
+
+docker exec -it smb smbstatus

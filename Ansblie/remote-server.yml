@@ -1,0 +1,11 @@
+---
+- name: Deploy Remote Server Configuration
+  hosts: remote-server
+  become: true
+
+  roles:
+  - dns_config
+  - docker_setup
+  - promtail
+  - allow
+  - docker_apps

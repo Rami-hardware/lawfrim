@@ -1,0 +1,32 @@
+docker_apps_enabled:
+- rustdesk_hbbs
+- rustdesk_hbbr
+- promtail
+- adguardhome
+- node-exporter
+
+rustdesk_hbbs_ports:
+- "21115:21115"
+- "21116:21116"
+- "21116:21116/udp"
+
+rustdesk_hbbr_ports:
+- "21117:21117"
+- "21118:21118"
+adguard_ports:
+- "5353:53/tcp"
+- "5353:53/udp"
+- "67:67/udp"
+- "68:68/tcp"
+- "68:68/udp"
+- "80:80"
+- "443:443"
+- "3000:3000"
+
+rustdesk_hbbs_volume_dir: /opt/rustdesk/hbbs
+rustdesk_hbbr_volume_dir: /opt/rustdesk/hbbr
+
+adguard_work_dir: /opt/adguardhome/work
+adguard_conf_dir: /opt/adguardhome/conf
+# Promtail
+promtail_config_path: "/opt/docker/promtail/config.yml"

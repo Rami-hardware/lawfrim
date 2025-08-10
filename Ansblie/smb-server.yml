@@ -1,0 +1,16 @@
+---
+- name: Deploy SMB Server Configuration
+  hosts: smb-server
+  become: true
+
+  vars:
+    var: shared
+
+  roles:
+  - dns_config
+  - docker_setup
+  - mount
+  - samba
+  - backup
+  - promtail
+  - docker_apps

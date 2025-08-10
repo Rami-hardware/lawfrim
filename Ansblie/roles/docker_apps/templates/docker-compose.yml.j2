@@ -1,0 +1,226 @@
+services:
+{% if 'rustdesk_hbbs' in docker_apps_enabled %}
+  rustdesk-hbbs:
+    image: rustdesk/rustdesk-server:latest
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-retries: "2"
+        loki-max-backoff: "800ms"
+        loki-timeout: "1s"
+        keep-file: "true"
+        mode: "non-blocking"
+    container_name: rustdesk-hbbs
+    command: hbbs -k _
+    ports:
+{% for port in rustdesk_hbbs_ports %}
+      - "{{ port }}"
+{% endfor %}
+    volumes:
+      - "{{ rustdesk_hbbs_volume_dir }}:/root"
+    restart: unless-stopped
+{% endif %}
+
+{% if 'rustdesk_hbbr' in docker_apps_enabled %}
+  rustdesk-hbbr:
+    image: rustdesk/rustdesk-server:latest
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-retries: "2"
+        loki-max-backoff: "800ms"
+        loki-timeout: "1s"
+        keep-file: "true"
+        mode: "non-blocking"
+    container_name: rustdesk-hbbr
+    command: hbbr -k _
+    ports:
+{% for port in rustdesk_hbbr_ports %}
+      - "{{ port }}"
+{% endfor %}
+    volumes:
+      - "{{ rustdesk_hbbr_volume_dir }}:/root"
+    restart: unless-stopped
+{% endif %}
+
+{% if 'adguardhome' in docker_apps_enabled %}
+  adguardhome:
+    image: adguard/adguardhome:latest
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-retries: "2"
+        loki-max-backoff: "800ms"
+        loki-timeout: "1s"
+        keep-file: "true"
+        mode: "non-blocking"
+    container_name: adguardhome
+    ports:
+{% for port in adguard_ports %}
+      - "{{ port }}"
+{% endfor %}
+    volumes:
+      - "{{ adguard_work_dir }}:/opt/adguardhome/work"
+      - "{{ adguard_conf_dir }}:/opt/adguardhome/conf"
+    restart: unless-stopped
+{% endif %}
+
+{% if 'samba' in docker_apps_enabled %}
+  smb:
+    image: dperson/samba:latest
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-retries: "2"
+        loki-max-backoff: "800ms"
+        loki-timeout: "1s"
+        keep-file: "true"
+        mode: "non-blocking"
+    container_name: smb
+    command: >
+      -S
+      -u "lawfrim;lawfrim@123"
+      -s "shared;/mount/shared;yes;no;no;lawfrim"
+      -g "max connections = 0"
+      -g "server multi channel support = yes"
+    ports:
+      - "139:139"
+      - "445:445"
+    volumes:
+      - "/mnt/pve/shared:/mount/shared"
+    restart: unless-stopped
+{% endif %}
+
+
+
+{% if 'promtail' in docker_apps_enabled %}
+  promtail:
+    image: grafana/promtail:latest
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-retries: "2"
+        loki-max-backoff: "800ms"
+        loki-timeout: "1s"
+        keep-file: "true"
+        mode: "non-blocking"
+    container_name: promtail
+    command: -config.file=/etc/promtail/config.yml
+    volumes:
+      - "{{ promtail_config_path }}:/etc/promtail/config.yml"
+      - "/var/log:/var/log"
+    restart: unless-stopped
+{% endif %}
+
+{% if 'loki' in docker_apps_enabled %}
+  loki:
+    image: grafana/loki:latest
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-retries: "2"
+        loki-max-backoff: "800ms"
+        loki-timeout: "1s"
+        keep-file: "true"
+        mode: "non-blocking"
+    container_name: loki
+    command: -config.file=/etc/loki/config.yml
+    volumes:
+      - /opt/docker/loki/config.yml:/etc/loki/config.yml:ro
+    ports:
+      - "3100:3100"
+    restart: unless-stopped
+{% endif %}
+
+{% if 'grafana' in docker_apps_enabled %}
+  grafana:
+    image: grafana/grafana:latest
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-retries: "2"
+        loki-max-backoff: "800ms"
+        loki-timeout: "1s"
+        keep-file: "true"
+        mode: "non-blocking"
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./grafana:/var/lib/grafana"
+    restart: unless-stopped
+{% endif %}
+
+{% if 'alertmanager' in docker_apps_enabled %}
+  alertmanager:
+    image: prom/alertmanager:latest
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-retries: "2"
+        loki-max-backoff: "800ms"
+        loki-timeout: "1s"
+        keep-file: "true"
+        mode: "non-blocking"
+    container_name: alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+    volumes:
+      - "./alertmanager/config.yml:/etc/alertmanager/config.yml"
+    ports:
+      - "9093:9093"
+    restart: unless-stopped
+{% endif %}
+
+{% if 'prometheus' in docker_apps_enabled %}
+  prometheus:
+    image: prom/prometheus:latest
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-retries: "2"
+        loki-max-backoff: "800ms"
+        loki-timeout: "1s"
+        keep-file: "true"
+        mode: "non-blocking"
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    volumes:
+      - "./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+{% endif %}
+
+{% if 'node-exporter' in docker_apps_enabled %}
+  node-exporter:
+    image: prom/node-exporter:latest
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-retries: "2"
+        loki-max-backoff: "800ms"
+        loki-timeout: "1s"
+        keep-file: "true"
+        mode: "non-blocking"
+    container_name: node-exporter
+    command:
+      - '--path.rootfs=/host'
+    volumes:
+      - "/:/host:ro,rslave"
+    ports:
+      - "9100:9100"
+    pid: "host"
+    restart: unless-stopped
+{% endif %}
