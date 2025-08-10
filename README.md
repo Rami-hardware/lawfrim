@@ -98,7 +98,7 @@ infrastructure/
 │       └── ...
 .github/
 └── workflows/
-    └── deploy.yml      # CI/CD Pipeline
+    └── deploy.yml      # CI/CD Pipeline ( Working in that 😊👌 )
 ```
 
 ## ⚙️ Usage
@@ -120,10 +120,10 @@ ansible-playbook -i inventory/hosts site.yml
 
 All Grafana dashboards are stored as JSON and auto-provisioned on boot.
 Example panels:
-•	Container status
-•	Docker logs via Loki
-•	Backup task history
-•	AdGuard DNS analytics
+- Container status
+- Docker logs via Loki
+-	Backup task history
+-	AdGuard DNS analytics
 
 
 ## Authors
@@ -133,6 +133,6 @@ Example panels:
 
 
 ## 🧠 Notes
-•	Built with stability, cost-efficiency, and future extensibility in mind.
-•	All services are containerized for easier management and updates.
-•	Fully documented and portable across other small-business use cases.# lawfrim
+-	Built with stability, cost-efficiency, and future extensibility in mind.
+-	All services are containerized for easier management and updates.
+-	Fully documented and portable across other small-business use cases.# lawfrim
