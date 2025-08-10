@@ -32,7 +32,6 @@ It includes file sharing, remote access, backups, observability, and service aut
 - *Security*:
   - SSH Hardened
   - AdGuard Home for DNS Filtering
-- *CI/CD*: GitHub Actions for service updates & deployments
 
 ---
 
@@ -110,8 +109,6 @@ cd ../ansible
 ansible-playbook -i inventory/hosts site.yml
 ```
 
-## 🔁 CI/CD (via GitHub Actions)
-•	Push to main → Triggers Docker service update on the remote VM
 
 
 ## 📈 Dashboards
