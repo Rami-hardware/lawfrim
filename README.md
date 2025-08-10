@@ -119,10 +119,10 @@ ansible-playbook -i inventory/hosts site.yml
 
 All Grafana dashboards are stored as JSON and auto-provisioned on boot.
 Example panels:
-	•	Container status
-	•	Docker logs via Loki
-	•	Backup task history
-	•	AdGuard DNS analytics
+•	Container status
+•	Docker logs via Loki
+•	Backup task history
+•	AdGuard DNS analytics
 
 
 ## 🤝 Author
@@ -135,6 +135,6 @@ DevOps Engineer | Self-hosting Enthusiast | Infrastructure-as-Code Advocate
 
 
 ## 🧠 Notes
-	•	Built with stability, cost-efficiency, and future extensibility in mind.
-	•	All services are containerized for easier management and updates.
-	•	Fully documented and portable across other small-business use cases.
+•	Built with stability, cost-efficiency, and future extensibility in mind.
+•	All services are containerized for easier management and updates.
+•	Fully documented and portable across other small-business use cases.
