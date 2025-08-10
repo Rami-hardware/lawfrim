@@ -3,7 +3,7 @@ name: Terraform CI for Home Server
 on:
   push:
     branches:
-    - media-rollback-final
+    - main
 
 jobs:
   terraform:
