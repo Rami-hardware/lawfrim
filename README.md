@@ -37,7 +37,7 @@ It includes file sharing, remote access, backups, observability, and service aut
 ---
 
 ## 🗂️ Infrastructure Diagram
-
+```bash
 [Proxmox Node]
 ├── Remote VM
 │   ├── AdGuard Home (DNS Sinkhole)
@@ -46,7 +46,7 @@ It includes file sharing, remote access, backups, observability, and service aut
 ├── Backup Server (Automated Backups + Snapshots)
 |── Mointer Server (Grafana, Loki, Alertmanger, Prometheus)
 ---
-
+```
 ## 📡 Monitoring & Observability
 
 - *Grafana Dashboards* with live metrics for:
@@ -95,25 +95,27 @@ infrastructure/
 .github/
 └── workflows/
     └── deploy.yml      # CI/CD Pipeline
+```
 
-⚙️ Usage
+## ⚙️ Usage
 
-🚀 Deploy Infrastructure
-
+## 🚀 Deploy Infrastructure
+``` bash
 cd infrastructure/terraform
 terraform init && terraform apply
-
+```
 ⚙️ Configure & Install Services
-
+``` bash
 cd ../ansible
 ansible-playbook -i inventory/hosts site.yml
+```
 
-🔁 CI/CD (via GitHub Actions)
-	•	Push to main → Triggers Docker service update on the remote VM
+## 🔁 CI/CD (via GitHub Actions)
+``` bash
+•	Push to main → Triggers Docker service update on the remote VM
+```
 
-⸻
-
-📈 Dashboards
+## 📈 Dashboards
 
 All Grafana dashboards are stored as JSON and auto-provisioned on boot.
 Example panels:
@@ -122,18 +124,17 @@ Example panels:
 	•	Backup task history
 	•	AdGuard DNS analytics
 
-⸻
 
-🤝 Author
+## 🤝 Author
 
 Rami Dannah
 DevOps Engineer | Self-hosting Enthusiast | Infrastructure-as-Code Advocate
 📍 Currently based in Saudi Arabia
 🌐 LinkedIn | GitHub
 
-⸻
 
-🧠 Notes
+
+## 🧠 Notes
 	•	Built with stability, cost-efficiency, and future extensibility in mind.
 	•	All services are containerized for easier management and updates.
 	•	Fully documented and portable across other small-business use cases.
