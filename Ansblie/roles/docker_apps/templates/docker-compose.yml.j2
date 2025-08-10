@@ -2,10 +2,10 @@ services:
 {% if 'rustdesk_hbbs' in docker_apps_enabled %}
   rustdesk-hbbs:
     image: rustdesk/rustdesk-server:latest
-    logging:
+  logging:
       driver: loki
       options:
-        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-url: "http://moniter:3100/loki/api/v1/push"
         loki-retries: "2"
         loki-max-backoff: "800ms"
         loki-timeout: "1s"
@@ -25,10 +25,10 @@ services:
 {% if 'rustdesk_hbbr' in docker_apps_enabled %}
   rustdesk-hbbr:
     image: rustdesk/rustdesk-server:latest
-    logging:
+  logging:
       driver: loki
       options:
-        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-url: "http://moniter:3100/loki/api/v1/push"
         loki-retries: "2"
         loki-max-backoff: "800ms"
         loki-timeout: "1s"
@@ -48,10 +48,10 @@ services:
 {% if 'adguardhome' in docker_apps_enabled %}
   adguardhome:
     image: adguard/adguardhome:latest
-    logging:
+  logging:
       driver: loki
       options:
-        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-url: "http://moniter:3100/loki/api/v1/push"
         loki-retries: "2"
         loki-max-backoff: "800ms"
         loki-timeout: "1s"
@@ -71,10 +71,10 @@ services:
 {% if 'samba' in docker_apps_enabled %}
   smb:
     image: dperson/samba:latest
-    logging:
+  logging:
       driver: loki
       options:
-        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-url: "http://moniter:3100/loki/api/v1/push"
         loki-retries: "2"
         loki-max-backoff: "800ms"
         loki-timeout: "1s"
@@ -83,7 +83,7 @@ services:
     container_name: smb
     command: >
       -S
-      -u "lawfrim;lawfrim@123"
+      -u "user;password"
       -s "shared;/mount/shared;yes;no;no;lawfrim"
       -g "max connections = 0"
       -g "server multi channel support = yes"
@@ -100,10 +100,10 @@ services:
 {% if 'promtail' in docker_apps_enabled %}
   promtail:
     image: grafana/promtail:latest
-    logging:
+  logging:
       driver: loki
       options:
-        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-url: "http://moniter:3100/loki/api/v1/push"
         loki-retries: "2"
         loki-max-backoff: "800ms"
         loki-timeout: "1s"
@@ -123,7 +123,7 @@ services:
     logging:
       driver: loki
       options:
-        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-url: "http://moniter:3100/loki/api/v1/push"
         loki-retries: "2"
         loki-max-backoff: "800ms"
         loki-timeout: "1s"
@@ -141,10 +141,10 @@ services:
 {% if 'grafana' in docker_apps_enabled %}
   grafana:
     image: grafana/grafana:latest
-    logging:
+  logging:
       driver: loki
       options:
-        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-url: "http://moniter:3100/loki/api/v1/push"
         loki-retries: "2"
         loki-max-backoff: "800ms"
         loki-timeout: "1s"
@@ -161,10 +161,10 @@ services:
 {% if 'alertmanager' in docker_apps_enabled %}
   alertmanager:
     image: prom/alertmanager:latest
-    logging:
+  logging:
       driver: loki
       options:
-        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-url: "http://moniter:3100/loki/api/v1/push"
         loki-retries: "2"
         loki-max-backoff: "800ms"
         loki-timeout: "1s"
@@ -183,10 +183,10 @@ services:
 {% if 'prometheus' in docker_apps_enabled %}
   prometheus:
     image: prom/prometheus:latest
-    logging:
+  logging:
       driver: loki
       options:
-        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-url: "http://moniter:3100/loki/api/v1/push"
         loki-retries: "2"
         loki-max-backoff: "800ms"
         loki-timeout: "1s"
@@ -205,10 +205,10 @@ services:
 {% if 'node-exporter' in docker_apps_enabled %}
   node-exporter:
     image: prom/node-exporter:latest
-    logging:
+  logging:
       driver: loki
       options:
-        loki-url: "http://192.168.8.215:3100/loki/api/v1/push"
+        loki-url: "http://moniter:3100/loki/api/v1/push"
         loki-retries: "2"
         loki-max-backoff: "800ms"
         loki-timeout: "1s"

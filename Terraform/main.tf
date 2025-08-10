@@ -8,9 +8,9 @@ resource "proxmox_vm_qemu" "remote-server" {
   os_type     = "cloud-init"
   vmid        = 911
 
-  ciuser     = "remote"
-  cipassword = "remote@123"
-  ipconfig0  = "ip=192.168.8.222/24,gw=192.168.8.1"
+  ciuser     = "user"
+  cipassword = "password"
+  ipconfig0  = "ip=ipAddr/24,gw=gateway"
 
   scsihw  = "virtio-scsi-pci"
   cores   = 1
@@ -68,9 +68,9 @@ resource "proxmox_vm_qemu" "smb-server" {
   os_type     = "cloud-init"
   vmid        = 115
 
-  ciuser     = "smb"
-  cipassword = "smb@123"
-  ipconfig0  = "ip=192.168.8.225/24,gw=192.168.8.1"
+  ciuser     = "user"
+  cipassword = "password"
+  ipconfig0  = "ip=ipAddr/24,gw=gateway"
 
   scsihw  = "virtio-scsi-pci"
   cores   = 1
@@ -137,9 +137,9 @@ resource "proxmox_vm_qemu" "monitor-server" {
   os_type     = "cloud-init"
   vmid        = 222
 
-  ciuser     = "monitor"
-  cipassword = "monitor@123"
-  ipconfig0  = "ip=192.168.8.215/24,gw=192.168.8.1"
+  ciuser     = "user"
+  cipassword = "password"
+  ipconfig0  = "ip=ipAddr/24,gw=gateway"
 
   scsihw  = "virtio-scsi-pci"
   cores   = 1
@@ -198,12 +198,9 @@ resource "proxmox_vm_qemu" "backup-server" {
   os_type     = "cloud-init"
   vmid        = 323
 
-  ciuser     = "test"
-  cipassword = "test@123"
-
-
-
-  ipconfig0  = "ip=192.168.8.210/24,gw=192.168.8.1"
+  ciuser     = "user"
+  cipassword = "password"
+  ipconfig0  = "ip=ipAddr/24,gw=gateway"
 
   scsihw  = "virtio-scsi-pci"
   cores   = 1

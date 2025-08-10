@@ -18,13 +18,13 @@
 
         - job_name: 'remote_node'
           static_configs:
-            - targets: ['192.168.8.222:9100']
+            - targets: ['remote:9100']
         - job_name: 'smb_node'
           static_configs:
-            - targets: ['192.168.8.225:9100']
+            - targets: ['smb:9100']
         - job_name: 'backup_node'
           static_configs:
-            - targets: ['192.168.8.210:9100']
+            - targets: ['backup:9100']
     mode: '0644'
     force: yes
 
@@ -58,7 +58,7 @@
       receivers:
         - name: 'nodejs-webhook'
           webhook_configs:
-            - url: 'http://192.168.8.215:3002/alertmanager'
+            - url: 'http://mointer:3002/alertmanager'
 
     mode: '0644'
 

@@ -16,7 +16,7 @@
       const app = express();
       app.use(express.json());
 
-      const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1396875497027408004/J4hG0rf9c5mwgxtMqQULApokaKOlkzsAlRaq69Ckx-Kh-pPRfDDyB_IQmPK3wHiX8-l_';
+      const DISCORD_WEBHOOK_URL = 'url_to_your_discord_webhook'; // Replace with your Discord webhook URL
 
       app.post('/alertmanager', async (req, res) => {
         const alerts = req.body.alerts || [];
