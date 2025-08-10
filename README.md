@@ -1,3 +1,8 @@
+
+# Project Title
+
+A brief description of what this project does and who it's for
+
 # ⚖️ Law Office Infrastructure - DevOps Project
 
 This project provides a complete, production-ready, self-hosted infrastructure stack for a small law office.  
@@ -121,14 +126,9 @@ Example panels:
 •	AdGuard DNS analytics
 
 
-## 🤝 Author
+## Authors
 
-Rami Dannah
-DevOps Engineer 
-Self-hosting Enthusiast 
-Infrastructure-as-Code Advocate
-📍 Currently based in Saudi Arabia
-🌐 LinkedIn | GitHub
+- [Rami Dannah](https://www.github.com/rami-hardware)
 
 
 
