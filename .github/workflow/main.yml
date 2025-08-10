@@ -7,7 +7,7 @@ on:
 
 jobs:
   terraform:
-    name: Terraform Plan and Lint
+    name: Terraform Plan, Lint & Validate
     runs-on: ubuntu-latest
 
     steps:
@@ -17,10 +17,22 @@ jobs:
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v3
       with:
-        terraform_version: 1.8.5 # Use your required version
+        terraform_version: 1.8.5
 
-    - name: Initialize Terraform
+    - name: Terraform Format Check
+      run: terraform fmt -check -recursive
+
+    - name: Terraform Init
       run: terraform init
 
-    - name: Plan
+    - name: Terraform Validate
+      run: terraform validate
+
+    - name: Terraform Plan
       run: terraform plan -out=tfplan
+
+    - name: Upload Terraform Plan Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: terraform-plan
+        path: tfplan
