@@ -6,24 +6,52 @@
     group: 1000
     mode: '0777'
 
-- name: Enable UFW
-  community.general.ufw:
-    state: enabled
 
-- name: Allow SMB port 139
-  community.general.ufw:
-    rule: allow
-    port: 139
-    proto: tcp
+- name: Add system users inside smb container (if not exist)
+  shell: |
+    id -u {{ item.name }} || useradd -M {{ item.name }}
+  args:
+    executable: /bin/bash
+  loop: "{{ samba_users }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: add_system_users
+  changed_when: "'useradd' in add_system_users.stdout or add_system_users.rc == 0"
 
-- name: Allow SMB port 445
-  community.general.ufw:
-    rule: allow
-    port: 445
-    proto: tcp
+- name: Check if samba user exists
+  shell: docker exec smb pdbedit -L | grep -w {{ item.name }}
+  register: samba_user_check
+  ignore_errors: true
+  loop: "{{ samba_users }}"
+  loop_control:
+    label: "{{ item.name }}"
 
-- name: Allow SSH port 22
-  community.general.ufw:
-    rule: allow
-    port: 22
-    proto: tcp
+- name: Remove samba user if exists (optional, if you want to overwrite)
+  shell: docker exec smb smbpasswd -x {{ item.name }}
+  loop: "{{ samba_users }}"
+  ignore_errors: true
+
+- name: Add samba user
+  shell: |
+    printf "%s\n%s\n" "{{ item.password }}" "{{ item.password }}" | docker exec -i smb smbpasswd -a -s {{ item.name }}
+  loop: "{{ samba_users }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Add samba user if not exists
+  shell: |
+    printf "%s\n%s\n" "{{ item.1.password }}" "{{ item.1.password }}" | docker exec -i smb smbpasswd -a -s {{ item.1.name }}
+  when: item.0.rc != 0
+  loop: "{{ samba_user_check.results | zip(samba_users) | list }}"
+  loop_control:
+    label: "{{ item.1.name }}"
+  ignore_errors: true
+
+- name: Update samba user password if user exists
+  shell: |
+    printf "%s\n%s\n" "{{ item.1.password }}" "{{ item.1.password }}" | docker exec -i smb smbpasswd -s {{ item.1.name }}
+  when: item.0.rc == 0
+  loop: "{{ samba_user_check.results | zip(samba_users) | list }}"
+  loop_control:
+    label: "{{ item.1.name }}"
+  ignore_errors: true
