@@ -4,3 +4,7 @@ docker_apps_enabled:
 - samba
 - promtail
 - node-exporter
+
+samba_users:
+- { name: "user", password: "password" }
+- { name: "user", password: "password" }
